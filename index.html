@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>刮刮乐</title>
+   
+</head>
+<body>
+    <div style="position: relative; width: 400px; height: 170px;border:3px solid rgb(4, 189, 235); ">
+        <canvas id="canvas1" width="400" height="170" style="position:absolute; "></canvas>
+        <canvas id="canvas2" width="400" height="170" style="position:absolute;"></canvas>
+    </div>
+</body>
+<script type="text/javascript">
+ function Draw(canvas1, canvas2) {
+            var canvas = document.getElementById("canvas1");
+            var context = canvas.getContext("2d");
+            //刮开图层后显示的随机内容
+            // var arr =["一等奖","二等奖","三等奖","谢谢惠顾"];
+            // var  index = parseInt(Math.random()*arr.length);
+            context.font = "normal 35px 隶书";
+            context.fillStyle = "rgb(165,6,6)";
+            context.textAlign="center";
+            context.fillText("国际商务谈判10.-11.40",180,100);
+   
+            var canvas2 = document.getElementById("canvas2");
+            var context2 = canvas2.getContext("2d");
+            context2.fillStyle = "gray";
+            context2.fillRect(0, 0, 400, 170);
+            context2.fill();
+            //在源图像外显示目标操作
+            context2.globalCompositeOperation = "destination-out";
+            var isMousedown = false;
+            canvas2.addEventListener("mousedown", function (e) {
+                isMousedown = true;
+                var x = e.clientX-canvas2.offsetLeft;
+				var y = e.clientY-canvas2.offsetTop;
+                context2.fillStyle = "#fff";
+                context2.beginPath();
+                context2.arc(x, y, 30, 0, Math.PI * 2, true);
+                context2.closePath();
+                context2.fill();
+                canvas2.addEventListener("mousemove", function (e) {
+                    if (isMousedown) {
+                    var x = e.clientX-canvas2.offsetLeft;
+				    var y = e.clientY-canvas2.offsetTop;
+                    context2.beginPath();
+                    context2.arc(x, y, 30, 0, Math.PI * 2, true);
+                    context2.closePath();
+                    context2.fill();
+                    }
+                    //判断是否到百分之六十
+                    var imgdata = context2.getImageData(0,0,canvas2.width,canvas2.height);
+                    var data = imgdata.data;
+                    var k = 0;
+                    for(var i=0;i<data.length;i+=4){
+                        var j = data[i+3];
+                        if(j==0){
+                            k++;
+                        }
+                        if(k>=data.length/4*0.6){
+                            context2.clearRect(0,0,canvas2.width,canvas2.height);
+                        }
+                    }	    
+                }, false);
+            }, false);
+            canvas2.addEventListener("mouseup", function (e) {
+                    isMousedown = false;
+                }, false);
+         }
+        Draw("canvas1", "canvas2"); 
+</script>
+</html>
